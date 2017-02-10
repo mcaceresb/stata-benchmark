@@ -1,0 +1,7 @@
+v 1
+d Generic benchmark of Stata program
+d Mauricio Caceres Bravo, mauricio.caceres.bravo@gmail.com
+d
+d Support: email mauricio.caceres.bravo at gmail dot com
+f benchmark.ado
+f benchmark.sthlp
