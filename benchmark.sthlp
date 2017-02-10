@@ -20,15 +20,15 @@
 
 {syntab:Main}
 {synopt:{opt reps(int)}} Number of repetitions. {p_end}
-{synopt:{opt disp:lay} Display how long each repetition took after each run. {p_end}
+{synopt:{opt disp:lay}} Display how long each repetition took after each run. {p_end}
 
 {marker desc}{title:Description}
 
-{pstd} {cmd:benchmark} Is a very simple wrapper to determine how long a code takes to run. I have found it useful whenever I want to optimize a piece of code.{p_end}
+{pstd} {cmd:benchmark} is a very simple wrapper to determine how long a code takes to run. I have found it useful whenever I want to optimize a piece of code.{p_end}
 
 {marker ex}{title:Examples}
 
-{phang}1. Randomize a dataset into 2 groups, checking for balance by gender.{p_end}
+{phang}Randomize a dataset into 2 groups, checking for balance by gender.{p_end}
 
 {pmore}{inp:. sysuse auto}{p_end}
 {pmore}{inp:. benchmark, reps(10) disp: qui reg price mpg}{p_end}
