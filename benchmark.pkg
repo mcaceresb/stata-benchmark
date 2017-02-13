@@ -1,7 +1,13 @@
 v 0.1
-d Generic benchmark of Stata program
-d Mauricio Caceres Bravo, mauricio.caceres.bravo@gmail.com
 d
-d Support: email mauricio.caceres.bravo at gmail dot com
+d 'BENCHMARK': Quick hack to benchmark Stata programs
+d
+d Generic benchmark of Stata program
+d
+d Distribution-Date: 20170209
+d
+d Author: Mauricio Caceres Bravo
+d Support: mauricio.caceres.bravo@gmail.com
+d
 f benchmark.ado
 f benchmark.sthlp
