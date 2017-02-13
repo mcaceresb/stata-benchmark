@@ -27,7 +27,7 @@ program benchmark, rclass
         timer off 99
         qui timer list
         matrix `benchmark' = nullmat(`benchmark') \ `r', r(t99)
-        if "`display'" != "" di "`r': `:di trim("`:di %21.4gc r(t99)'")' seconds"
+        if ("`display'" != "") di "`r': `:di trim("`:di %21.4gc r(t99)'")' seconds"
         timer clear 99
         timer on 99
     }
@@ -39,6 +39,9 @@ program benchmark, rclass
         local average = `r(t98)' / `reps'
         timer clear
     }
+
+    local average_str = `:di trim("`:di %21.4gc `average''")'
+    if ("`display'" != "") di "Average over `reps' runs: `average_str' seconds"
 
     return matrix benchmark = `benchmark'
     return scalar average   = `average'
