@@ -23,6 +23,6 @@ Examples
 sysuse auto, clear
 bench, reps(10) trace last: reg price mpg
 return list
-bench, restore last: gen x = 1
+bench, reps(5) restore last: gen x = 1
 ds x
 ```
