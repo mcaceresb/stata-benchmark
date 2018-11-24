@@ -12,13 +12,17 @@ Installation
 ------------
 
 ```stata
-net install benchmark, from(https://raw.githubusercontent.com/mcaceresb/stata-benchmark/master/)
+local github https://raw.githubusercontent.com
+net install benchmark, from(`github'/mcaceresb/stata-benchmark/master/)
 ```
 
 Examples
 ---------
 
 ```stata
-sysuse auto
-benchmark, reps(10) disp: qui reg price mpg
+sysuse auto, clear
+bench, reps(10) trace last: reg price mpg
+return list
+bench, restore last: gen x = 1
+ds x
 ```

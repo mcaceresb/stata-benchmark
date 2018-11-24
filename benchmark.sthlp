@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1 16Sep2016}{...}
+{* *! version 0.3 24Sep2018}{...}
 {cmd:help benchmark}
 {hline}
 
@@ -12,15 +12,22 @@
 {marker syntax}{title:Syntax}
 
 {pstd}
-{cmd:benchmark}, {opt reps(int)} [{opt disp:lay}]: {it:Stata command to benchmark}
+{cmd:benchmark},
+[{it:{help benchmark##benchmark_options:options}}]
+: {it:Stata command to benchmark}
 
 {synoptset 23 tabbed}{...}
-{synopthdr}
+{marker benchmark_options}{...}
+{synopthdr :benchmark_options}
 {synoptline}
 
 {syntab:Main}
-{synopt:{opt reps(int)}} Number of repetitions. {p_end}
-{synopt:{opt disp:lay}} Display how long each repetition took after each run. {p_end}
+{synopt:{opt reps(int)}} Number of repetitions. Default is 1. {p_end}
+{synopt:{opt trace}} Trace how long each iteration takes to run. {p_end}
+{synopt:{opt last}} Only display the last iteration. When used with {opt restore}, do not wrap last iteration in preserve/restore. {p_end}
+{synopt:{opt timer(int)}} Specify timer to use for benchmark. Default looks for any open timer. {p_end}
+{synopt:{opt restore}} Wrap commad in preserve/restore pairs. {p_end}
+{synopt:{opt save}} Save the last run time within Stta's {opt timer}. {p_end}
 
 {marker desc}{title:Description}
 

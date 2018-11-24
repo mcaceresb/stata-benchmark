@@ -1,13 +1,15 @@
-v 0.2
+v 0.3
 d
 d 'BENCHMARK': Quick hack to benchmark Stata programs
 d
 d Generic benchmark of Stata program
 d
-d Distribution-Date: 20170213
+d Distribution-Date: 20181124
 d
 d Author: Mauricio Caceres Bravo
 d Support: mauricio.caceres.bravo@gmail.com
 d
+f bench.ado
+f bench.sthlp
 f benchmark.ado
 f benchmark.sthlp

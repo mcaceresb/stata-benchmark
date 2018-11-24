@@ -1,5 +1,5 @@
-*! version 0.1 16Sep2016 Mauricio Caceres, caceres@nber.org
-*! Generic benchmark of Stata program
+*! version 0.3 24Sep2018 Mauricio Caceres Bravo, mauricio.caceres.bravo@gmail.com
+*! Generic benchmark of Stata commands
 
 * Not really sure if there's a canon way to benchmark Stata programs;
 * this is a short hack I wrote for it that works OK.
@@ -7,42 +7,93 @@ capture program drop benchmark
 program benchmark, rclass
     version 13.1
 
-    * Hack to parse as colon program
-    gettoken 0 1: 0, p(:)
-    syntax, reps(int) [DISPlay]
+    * Parse program
+    _on_colon_parse `0'
+    local 0 `s(before)'
+    local 1 `s(after)'
+    syntax, [timer(int 0) reps(int 1) DISPlay TRace last restore save]
+    if ( "`trace'" != "" ) local display display
 
-    * Get rid of the colon
-    gettoken c 1: 1, p(:)
+    _assert(`reps' > 0), msg("-reps- must be positive.")
 
     * Iterate `reps' and report the result of each run
     qui {
-        tempname benchmark
-        timer clear
-        timer on 98
-        timer on 99
-    }
-
-    forvalues r = 1 / `reps' {
-        `1'
-        timer off 99
-        qui timer list
-        matrix `benchmark' = nullmat(`benchmark') \ `r', r(t99)
-        if ("`display'" != "") di "`r': `:di trim("`:di %21.4gc r(t99)'")' seconds"
-        timer clear 99
-        timer on 99
-    }
-
-    qui {
-        timer off 99
-        timer off 98
+        tempname benchmark average results
         timer list
-        local average = `r(t98)' / `reps'
-        timer clear
+        if ( `timer' ) {
+            local i = `timer'
+            _assert(`i' < 100 & `i' > 0), msg("-timer()- must be between 1 and 99.")
+        }
+        else {
+            local i = 99
+            while ( (`i' > 0) & ("`r(t`i')'" != "") ) {
+                local --i
+            }
+            if ( `i' == 0 ) {
+                disp as err "No open timers; pass option -timer()- explicitly."
+                exit 198
+            }
+        }
     }
 
-    local average_str = `:di trim("`:di %21.4gc `average''")'
-    if ("`display'" != "") di "Average over `reps' runs: `average_str' seconds"
+    local timerok = 1
+    forvalues r = 1 / `reps' {
+        local qui
+        if ( ("`last'" != "") & (`r' < `reps') ) {
+            local qui qui
+        }
+        if ( "`last'" != "" ) {
+            if ( ("`restore'" != "") & (`r' < `reps') ) preserve
+        }
+        else if ( "`restore'" != "" ) preserve
 
-    return matrix benchmark = `benchmark'
-    return scalar average   = `average'
+        benchmarkClear
+        timer clear `i'
+        timer on `i'
+        `qui' `1'
+        timer off `i'
+        if ( `r' == `reps' ) {
+            _return hold `results'
+        }
+
+        if ( "`last'" != "" ) {
+            if ( ("`restore'" != "") & (`r' < `reps') ) restore
+        }
+        else if ( "`restore'" != "" ) restore
+
+        qui timer list
+        matrix `benchmark' = nullmat(`benchmark') \ `r', r(t`i')
+        if ( r(t`i') == . ) local timerok = 0
+
+        if ( "`display'" != "" ) di "`r': `:di trim("`:di %21.4gc r(t`i')'")' seconds"
+    }
+
+    if ( `timerok' == 0 ) {
+        disp as err "Warning: Program cleared temporary timer `i'; benchmark not accurate."
+        disp as err "Try passing option -timer()- explicitly."
+        _return restore `results'
+        exit 0
+    }
+
+    * Report average over runs
+    qui {
+        timer off `i'
+        if ("`save'" == "") timer clear `i'
+        mata: st_numscalar("`average'", sum(st_matrix("`benchmark'")[., 2]) / `reps')
+    }
+
+    local average_str = "`:di trim("`:di %21.3fc scalar(`average')'")'"
+    if ( `reps' == 1 ) di "`average_str' seconds"
+    else di "Average over `reps' runs: `average_str' seconds"
+
+    * If program was an rclass program, don't clear those results
+    _return restore `results'
+    return add
+    return scalar bench_mean = `average'
+    return matrix bench_mat  = `benchmark'
+end
+
+capture program drop benchmarkClear
+program benchmarkClear, rclass
+    qui disp
 end
